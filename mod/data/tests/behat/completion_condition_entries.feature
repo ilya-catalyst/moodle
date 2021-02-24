@@ -18,13 +18,17 @@ Feature: Set entries required as a completion condition for a data item
       | student1 | C1 | student |
     And I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
-    And I add a "Database" to section "1" and I fill the form with:
-      | Name | Test database name |
-      | Description | Test database description |
-      | Completion tracking | Show activity as complete when conditions are met |
-      | completionview | 0 |
-      | completionentriesenabled | checked |
-      | completionentries        | 2 |
+    And the following "activities" exist:
+      | activity | name            | intro                    | course | idnumber   | section |
+      | data | Test database name | Test database description | C1     | database1  | 1       |
+    And I am on "Course 1" course homepage
+    And I follow "Test database name"
+    And I navigate to "Edit settings" in current page administration
+    And I set the following fields to these values:
+      | completion | 2 |
+      | completionentriesenabled | 1 |
+      | completionentries | 2 |
+    And I press "Save and return to course"
     And I am on "Course 1" course homepage
     And I add a "Text input" field to "Test database name" database and I fill the form with:
       | Field name | Test field name |

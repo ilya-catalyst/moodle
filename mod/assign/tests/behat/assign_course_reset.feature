@@ -22,15 +22,22 @@ Feature: Assign reset
       | name    | course | idnumber |
       | Group 1 | C1     | G1       |
       | Group 2 | C1     | G2       |
+    And the following "activity" exists:
+      | activity      | assign                  |
+      | course        | C1                      |
+      | idnumber      | 0001                    |
+      | name          | Test assignment name    |
+      | intro         | Submit your online text |
     And I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
-    And I add a "Assignment" to section "1" and I fill the form with:
-      | Assignment name | Test assignment name |
-      | Description | Submit your online text |
+    And I am on "Course 1" course homepage
+    And I follow "Test assignment name"
+    And I navigate to "Edit settings" in current page administration
+    And I set the following fields to these values:
       | assignsubmission_onlinetext_enabled | 1 |
       | assignsubmission_onlinetext_wordlimit_enabled | 1 |
       | assignsubmission_onlinetext_wordlimit | 10 |
       | assignsubmission_file_enabled | 0 |
+    And I press "Save and return to course"
 
   Scenario: Use course reset to clear all attempt data
     When I log out
@@ -41,6 +48,8 @@ Feature: Assign reset
     And I set the following fields to these values:
       | Online text | I'm the student first submission |
     And I press "Save changes"
+    And I press "Submit assignment"
+    And I press "Continue"
     Then I should see "Submitted for grading"
     And I should see "I'm the student first submission"
     And I should see "Not graded"

@@ -17,16 +17,20 @@ Feature: A teacher can use activity completion to track a student progress
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
     And I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
 
   Scenario: Require survey view
-    Given I add a "Survey" to section "1" and I fill the form with:
-      | Name | Test survey name |
+    Given the following "activities" exist:
+      | activity   | name                   | intro                         | course | idnumber    |
+      | survey     | Test survey name       | Test survey description       | C1     | survey1     |
+    And I am on "Course 1" course homepage
+    And I follow "Test survey name"
+    And I navigate to "Edit settings" in current page administration
+    And I set the following fields to these values:
       | Survey type | Critical incidents |
-      | Description | Test survey description |
       | Completion tracking | Show activity as complete when conditions are met |
       | id_completionview   | 1 |
       | id_completionsubmit | 0 |
+    And I press "Save and return to course"
     And I log out
     When I log in as "student1"
     And I am on "Course 1" course homepage
@@ -36,12 +40,17 @@ Feature: A teacher can use activity completion to track a student progress
     Then the "Test survey name" "survey" activity with "auto" completion should be marked as complete
 
   Scenario: Require survey submission
-    Given I add a "Survey" to section "1" and I fill the form with:
-      | Name | Test survey name |
+    Given the following "activities" exist:
+      | activity   | name                   | intro                         | course | idnumber    |
+      | survey     | Test survey name       | Test survey description       | C1     | survey1     |
+    And I am on "Course 1" course homepage
+    And I follow "Test survey name"
+    And I navigate to "Edit settings" in current page administration
+    And I set the following fields to these values:
       | Survey type | Critical incidents |
-      | Description | Test survey description |
       | Completion tracking | Show activity as complete when conditions are met |
       | id_completionsubmit | 1 |
+    And I press "Save and return to course"
     And I log out
     When I log in as "student1"
     And I am on "Course 1" course homepage

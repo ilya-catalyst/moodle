@@ -16,20 +16,32 @@ Feature: Set a certain number of discussions as a completion condition for a for
       | user | course | role |
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
+    And the following "activity" exists:
+      | activity | forum |
+      | course   | C1    |
+      | idnumber | 00001 |
+      | name     | Test forum name |
+      | description | Test forum name description |
+      | section     | 1                           |
+      | completion  | 2                           |
+      | completionview | 0                        |
+      | completiondiscussionsenabled | 1          |
+      | completiondiscussions        | 2          |
     And I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
     And I navigate to "Edit settings" in current page administration
     And I set the following fields to these values:
       | Enable completion tracking | Yes |
     And I press "Save and display"
-    When I add a "Forum" to section "1" and I fill the form with:
-      | Forum name | Test forum name |
-      | Description | Test forum description |
-      | Completion tracking | Show activity as complete when conditions are met |
-      | completionview               | 0 |
-      | completionpostsenabled       | 0 |
-      | completiondiscussionsenabled | 1 |
-      | completiondiscussions        | 2 |
+    And I am on "Course 1" course homepage
+    And I follow "Test forum name"
+    And I navigate to "Edit settings" in current page administration
+    And I set the following fields to these values:
+      | completion  | 2                           |
+      | completionview | 0                        |
+      | completiondiscussionsenabled | 1          |
+      | completiondiscussions        | 2          |
+    And I press "Save and return to course"
     And I log out
     And I log in as "student1"
     And I am on "Course 1" course homepage
