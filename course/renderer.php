@@ -272,25 +272,17 @@ class core_course_renderer extends plugin_renderer_base {
      * @return string
      */
     function course_section_add_cm_control($course, $section, $sectionreturn = null, $displayoptions = array()) {
-        global $CFG, $USER;
+        global $USER;
 
         // The returned control HTML can be one of the following:
         // - Only the non-ajax control (select menus of activities and resources) with a noscript fallback for non js clients.
         // - Only the ajax control (the link which when clicked produces the activity chooser modal). No noscript fallback.
-        // - [Behat only]: The non-ajax control and optionally the ajax control (depending on site settings). If included, the link
-        // takes priority and the non-ajax control is wrapped in a <noscript>.
-        // Behat requires the third case because some features run with JS, some do not. We must include the noscript fallback.
-        $behatsite = defined('BEHAT_SITE_RUNNING');
         $nonajaxcontrol = '';
         $ajaxcontrol = '';
         $courseajaxenabled = course_ajax_enabled($course);
-        $userchooserenabled = get_user_preferences('usemodchooser', $CFG->modchooserdefault);
 
-        // Decide what combination of controls to output:
-        // During behat runs, both controls can be used in conjunction to provide non-js fallback.
-        // During normal use only one control or the other will be output. No non-js fallback is needed.
-        $rendernonajaxcontrol = $behatsite || !$courseajaxenabled || !$userchooserenabled || $course->id != $this->page->course->id;
-        $renderajaxcontrol = $courseajaxenabled && $userchooserenabled && $course->id == $this->page->course->id;
+        $rendernonajaxcontrol = !$courseajaxenabled || $course->id != $this->page->course->id;
+        $renderajaxcontrol = $courseajaxenabled && $course->id == $this->page->course->id;
 
         // The non-ajax control, which includes an entirely non-js (<noscript>) fallback too.
         if ($rendernonajaxcontrol) {
@@ -302,6 +294,7 @@ class core_course_renderer extends plugin_renderer_base {
                 return '';
             }
 
+            debugging('non-js dropdowns are deprecated.', DEBUG_DEVELOPER);
             // Retrieve all modules with associated metadata.
             $contentitemservice = \core_course\local\factory\content_item_service_factory::get_content_item_service();
             $urlparams = ['section' => $section];
@@ -386,15 +379,6 @@ class core_course_renderer extends plugin_renderer_base {
             $this->course_activitychooser($course->id);
         }
 
-        // Behat only: If both controls are being included in the HTML,
-        // show the link by default and only fall back to the selects if js is disabled.
-        if ($behatsite && $renderajaxcontrol) {
-            $nonajaxcontrol = html_writer::tag('div', $nonajaxcontrol, array('class' => 'hiddenifjs addresourcedropdown'));
-            $ajaxcontrol = html_writer::tag('div', $ajaxcontrol, array('class' => 'visibleifjs addresourcemodchooser'));
-        }
-
-        // If behat is running, we should have the non-ajax control + the ajax control.
-        // Otherwise, we'll have one or the other.
         return $ajaxcontrol . $nonajaxcontrol;
     }
 

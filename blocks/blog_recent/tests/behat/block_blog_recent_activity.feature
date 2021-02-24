@@ -18,12 +18,21 @@ Feature: Students can use the recent blog entries block to view recent entries o
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
       | student2 | C1 | student |
+    And the following "activity" exists:
+      | activity                      | assign            |
+      | course                        | C1                |
+      | idnumber                      | 0001              |
+      | name                          | Test assignment 1 |
+      | intro                         | Offline text      |
+      | section                       | 1                 |
     And I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
-    And I add a "Assignment" to section "1" and I fill the form with:
-      | Assignment name | Test assignment 1 |
-      | Description | Offline text |
+    And I follow "Test assignment 1"
+    And I navigate to "Edit settings" in current page administration
+    And I set the following fields to these values:
       | assignsubmission_file_enabled | 0 |
+    And I press "Save and return to course"
+    And I am on "Course 1" course homepage
     And I follow "Test assignment 1"
     And I add the "Blog menu" block
     And I add the "Recent blog entries" block
